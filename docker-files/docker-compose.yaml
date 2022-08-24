@@ -39,10 +39,7 @@ services:
   nginx:
     build: 
       context: ./.docker/nginx
-      dockerfile: Dockerfile  
-    depeneds_on:
-      - wordpress
-      - phpmyadmin
+      dockerfile: Dockerfile
     restart: always      
     image: nginx:latest
     container_name: nginx_ctr    
