@@ -17,8 +17,6 @@ services:
       - app-network
       
   wordpress:
-    depeneds_on:
-       - mysql_db
     image: wordpress:latest
     container_name: wordpress_ctr
     restart: always    
@@ -58,8 +56,6 @@ services:
     restart: always
     
   phpmyadmin:
-    depeneds_on:
-       - mysql_db
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin_ctr        
     restart: unless-stopped
