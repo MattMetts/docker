@@ -5,9 +5,8 @@ services:
     image: mysql:8.0
     container_name: mysql-db
     restart: unless-stopped
-    env_file: .env
     environment:
-      - MYSQL_DATABASE=wordpress
+      - MYSQL_DATABASE=password
     volumes:
       - dbdata:/var/lib/mysql
     command: '--default-authentication-plugin=mysql_native_password'
@@ -20,11 +19,10 @@ services:
     image: wordpress:5.1.1-fpm-alpine
     container_name: wordpress
     restart: unless-stopped
-    env_file: .env
     environment:
       - WORDPRESS_DB_HOST=db:3306
-      - WORDPRESS_DB_USER=$MYSQL_USER
-      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_USER=username
+      - WORDPRESS_DB_PASSWORD=password
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       - wordpress:/var/www/html
@@ -51,11 +49,10 @@ services:
       - nginx
     image: certbot/certbot
     container_name: certbot
-    env_file: .env
     volumes:
       - certbot-etc:/etc/letsencrypt
       - wordpress:/var/www/html
-    command: certonly --webroot --webroot-path=/var/www/html --email $EMAIL --agree-tos --no-eff-email --staging -d MistyTheCat -d www.MistyTheCat
+    command: certonly --webroot --webroot-path=/var/www/html --email $EMAIL --agree-tos --no-eff-email --staging -d domain -d www.domain
 
   phpmyadmin:
       image: phpmyadmin:latest
