@@ -6,7 +6,10 @@ services:
     container_name: mysql-db
     restart: unless-stopped
     environment:
-      - MYSQL_DATABASE=password
+      - MYSQL_USER= username
+      - MYSQL_PASSWORD= password
+      - MYSQL_ROOT_PASSWORD= password
+      - MYSQL_DATABASE= database
     volumes:
       - dbdata:/var/lib/mysql
     command: '--default-authentication-plugin=mysql_native_password'
@@ -61,7 +64,7 @@ services:
         - "8081:80"
       container_name: pma
       links:
-        - db
+        - mysql-db
 
 volumes:
   certbot-etc:
