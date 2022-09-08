@@ -59,12 +59,17 @@ services:
     command: certonly --webroot --webroot-path=/var/www/html --email $EMAIL --agree-tos --no-eff-email --staging -d domain -d www.domain
 
   phpmyadmin:
-      image: phpmyadmin/phpmyadmin:latest
-      restart: always
-      ports:
-        - "8081:80"
-      container_name: pma
-      links:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: pma
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql:3306
+      MYSQL_ROOT_PASSWORD: password1
+    networks:
+      - wpsite
+    links:
         - mysql-db
 
 volumes:
