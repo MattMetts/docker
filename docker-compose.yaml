@@ -6,13 +6,12 @@ services:
     container_name: mysql-db
     restart: always
     environment:
-      - MYSQL_USER=username
-      - MYSQL_PASSWORD=password
-      - MYSQL_ROOT_PASSWORD=password1
-      - MYSQL_DATABASE=database
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password1
+      MYSQL_DATABASE: database
     volumes:
       - dbdata:/var/lib/mysql
-    command: '--default-authentication-plugin=mysql_native_password'
     networks:
       - lemp-app
 
@@ -21,12 +20,13 @@ services:
       - mysql-db
     image: wordpress:5.1.1-fpm-alpine
     container_name: wordpress
-    restart: unless-stopped
+    restart: always
+    ports:
+      - "8080:80"
     environment:
-      - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_DB_HOST=mysql-db:3306
       - WORDPRESS_DB_USER=username
       - WORDPRESS_DB_PASSWORD=password
-      - WORDPRESS_DB_NAME=wordpress
     volumes:
       - wordpress:/var/www/html
     networks:
@@ -39,7 +39,8 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "80:80"
+      - "443:443"
     volumes:
       - wordpress:/var/www/html
       - ./nginx-conf:/etc/nginx/conf.d
@@ -58,7 +59,7 @@ services:
     command: certonly --webroot --webroot-path=/var/www/html --email $EMAIL --agree-tos --no-eff-email --staging -d domain -d www.domain
 
   phpmyadmin:
-      image: phpmyadmin:latest
+      image: phpmyadmin/phpmyadmin:latest
       restart: always
       ports:
         - "8081:80"
@@ -70,7 +71,7 @@ volumes:
   certbot-etc:
   wordpress:
   dbdata:
-
+  
 networks:
   lemp-app:
     driver: bridge
