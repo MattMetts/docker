@@ -4,11 +4,11 @@ services:
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
-    restart: unless-stopped
+    restart: always
     environment:
       - MYSQL_USER=username
       - MYSQL_PASSWORD=password
-      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=password1
       - MYSQL_DATABASE=database
     volumes:
       - dbdata:/var/lib/mysql
