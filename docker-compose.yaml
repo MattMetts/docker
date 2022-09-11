@@ -16,10 +16,10 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
     environment:
-      - MYSQL_DATABASE: mysql-db
-      - MYSQL_USER: username
-      - MYSQL_PASSWORD: password
-      - MYSQL_ROOT_PASSWORD: password1
+       - "MYSQL_DATABASE=mysql-db"
+       - "MYSQL_USER=username"
+       - "MYSQL_PASSWORD=password"
+       - "MYSQL_ROOT_PASSWORD=password1"
     networks:
       - docker-app
 
@@ -32,10 +32,10 @@ services:
     depends_on:
       - database
     environment:
-      - PMA_HOST: database
-      - MYSQL_USER: username
-      - MYSQL_PASSWORD: password
-      - MYSQL_ROOT_PASSWORD: password1
+      - "PMA_HOST=database"
+      - "MYSQL_USER=username"
+      - "MYSQL_PASSWORD=password"
+      - "MYSQL_ROOT_PASSWORD=password1"
     networks:
       - docker-app
 
@@ -48,23 +48,25 @@ services:
     ports:
       - "8080:80"
     environment:
-      - WORDPRESS_DB_HOST: database
-      - WORDPRESS_DB_USER: phpmyadmin
-      - WORDPRESS_DB_PASSWORD: phpmyadmin
+     - "WORDPRESS_DB_HOST: database"
+     - "WORDPRESS_DB_USER: username"
+     - "WORDPRESS_DB_PASSWORD: password"
     volumes:
       - wordpress:/var/www/html
     networks:
       - docker-app
 
-   nginx:
-     depends_on:
-       - wordpress
-     image: nginx:latest
-     container_name: nginx
-     restart: always
-     volumes:
-       - wordpress:/var/www/html
-       - ./nginx-conf:/etc/nginx/conf.d
-     networks:
+  nginx:
+    depends_on:
+      - wordpress
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"    
+    restart: always
+    volumes:
+      - wordpress:/var/www/html
+      - ./nginx-conf:/etc/nginx/conf.d
+    networks:
       - docker-app
-       
