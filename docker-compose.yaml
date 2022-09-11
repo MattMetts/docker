@@ -23,10 +23,12 @@ services:
     ports:
       - "8081:80"
     environment:
-      PMA_HOST: mysql:3306
+      PMA_HOST: mysql-db:3306
       MYSQL_ROOT_PASSWORD: password1
     networks:
       - lemp-app
+    links:
+      - mysql-db
 
   wordpress:
     depends_on:
@@ -44,6 +46,8 @@ services:
       - wordpress:/var/www/html
     networks:
       - lemp-app
+    links:
+      - mysql-db      
 
   nginx:
     depends_on:
