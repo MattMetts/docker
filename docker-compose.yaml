@@ -24,9 +24,9 @@ services:
     ports:
       - "8080:80"
     environment:
-      - WORDPRESS_DB_HOST=mysql-db:3306
-      - WORDPRESS_DB_USER=username
-      - WORDPRESS_DB_PASSWORD=password
+      WORDPRESS_DB_HOST: mysql-db:3306
+      WORDPRESS_DB_USER: username
+      WORDPRESS_DB_PASSWORD: password
     volumes:
       - wordpress:/var/www/html
     networks:
@@ -37,7 +37,7 @@ services:
       - wordpress
     image: nginx:1.15.12-alpine
     container_name: nginx
-    restart: unless-stopped
+    restart: always
     ports:
       - "80:80"
       - "443:443"
