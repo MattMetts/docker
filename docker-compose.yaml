@@ -1,74 +1,70 @@
-version: '3'
+version: "3"
+
+volumes:
+  dbdata:
+  wordpress:
+
+networks:
+  docker-app:
+    driver: bridge
 
 services:
-  mysql-db:
-    image: mysql:5.7
-    container_name: mysql-db
+  database:
+    container_name: mysql_database
     restart: always
-    environment:
-      MYSQL_USER: username
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: password1
-      MYSQL_DATABASE: database
-    command: --default-authentication-plugin=mysql_native_password
+    image: mysql:5.7
     volumes:
       - dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE: mysql-db
+      - MYSQL_USER: username
+      - MYSQL_PASSWORD: password
+      - MYSQL_ROOT_PASSWORD: password1
     networks:
-      - lemp-app
-      
+      - docker-app
+
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: pma
+    container_name: phpmyadmin
     restart: always
+    image: phpmyadmin/phpmyadmin
     ports:
       - "8081:80"
+    depends_on:
+      - database
     environment:
-      PMA_HOST: mysql-db:3306
-      MYSQL_ROOT_PASSWORD: password1
+      - PMA_HOST: database
+      - MYSQL_USER: username
+      - MYSQL_PASSWORD: password
+      - MYSQL_ROOT_PASSWORD: password1
     networks:
-      - lemp-app
-    links:
-      - mysql-db
+      - docker-app
 
   wordpress:
     depends_on:
-      - mysql-db
+      - database
     image: wordpress:latest
     container_name: wordpress
     restart: always
     ports:
       - "8080:80"
     environment:
-      WORDPRESS_DB_HOST: mysql-db:3306
-      WORDPRESS_DB_USER: username
-      WORDPRESS_DB_PASSWORD: password
+      - WORDPRESS_DB_HOST: database
+      - WORDPRESS_DB_USER: phpmyadmin
+      - WORDPRESS_DB_PASSWORD: phpmyadmin
     volumes:
       - wordpress:/var/www/html
     networks:
-      - lemp-app
-    links:
-      - mysql-db      
+      - docker-app
 
-  nginx:
-    depends_on:
-      - wordpress
-    image: nginx:latest
-    container_name: nginx
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - wordpress:/var/www/html
-      - ./nginx-conf:/etc/nginx/conf.d
-    networks:
-      - lemp-app
-
-
-volumes:
-  wordpress:
-  dbdata:
-  
-networks:
-  lemp-app:
-    driver: bridge
+   nginx:
+     depends_on:
+       - wordpress
+     image: nginx:latest
+     container_name: nginx
+     restart: always
+     volumes:
+       - wordpress:/var/www/html
+       - ./nginx-conf:/etc/nginx/conf.d
+     networks:
+      - docker-app
+       
